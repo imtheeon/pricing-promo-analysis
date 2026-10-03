@@ -6,13 +6,14 @@ import pandas as pd
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from charts import usd, usdk
+
 ACC, GREY, TXT, GRID = "#D55E00", "#9E9E9E", "#4D4D4D", "#D9D9D9"
 BANDS = ["0%", "1-20%", "21-40%", ">40%"]
 plt.rcParams.update({"font.family": "sans-serif", "text.color": TXT, "axes.labelcolor": TXT, "xtick.color": TXT, "ytick.color": TXT,
                      "axes.edgecolor": GRID, "axes.spines.top": False, "axes.spines.right": False, "axes.grid": True,
                      "grid.color": GRID, "axes.axisbelow": True, "figure.dpi": 130})
 o = lambda n: pd.read_csv(f"outputs/{n}.csv")
-usdk = lambda x, _=None: f"-${-x / 1e3:,.0f}K" if x < 0 else f"${x / 1e3:,.0f}K"
 
 
 def save(fig, name, title):
@@ -52,8 +53,8 @@ for ax, s in zip(axs, NAMES):
     d = b[b.series == s].sort_values("mae", ascending=False)
     ax.bar(d.model.map(LABEL), d.mae, color=[GREY if m == "snaive" else ACC for m in d.model])
     for i, v in enumerate(d.mae):
-        ax.text(i, v, f"${v:,.0f}", ha="center", va="bottom")
-    ax.yaxis.set_major_formatter(usdk)
+        ax.text(i, v, usd(v), ha="center", va="bottom")
+    ax.yaxis.set_major_formatter(lambda x, _: usdk(x))
     ax.set(title=NAMES[s], ylabel="MAE on 6 held-out months")
     ax.margins(y=0.15)
 save(fig, "backtest", "ETS cuts 6-month holdout error vs seasonal naive")
@@ -64,10 +65,10 @@ for ax, s in zip(axs, NAMES):
     ax.fill_between(d.month, d.lo95, d.hi95, color=GRID, label="95% interval")
     ax.plot(hist.order_month, hist[s], color=GREY, label="Actual")
     ax.plot(d.month, d.point, color=ACC, lw=2, label="Forecast")
-    ax.yaxis.set_major_formatter(usdk)
+    ax.yaxis.set_major_formatter(lambda x, _: usdk(x))
     ax.xaxis.set_major_locator(matplotlib.dates.YearLocator())
     ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%Y"))
-    ax.set(title=f"{NAMES[s]}: Jan-Jun 2018 forecast {usdk(d.point.sum())}", ylabel="$ per month")
+    ax.set(title=f"{NAMES[s]}: Jan-Jun 2018 forecast {usdk(d.point.sum(), 0)}", ylabel="$ per month")
 axs[0].legend(frameon=False, fontsize=8, loc="upper left")
 save(fig, "forecast", "Six-month forecast with 95% prediction intervals")
 

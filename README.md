@@ -56,7 +56,7 @@ At the bounds, recommendations 1 and 2 together add $36K–$63K a year, set agai
 | Series | Seasonal naive MAE | ETS MAE | MAE change | Seasonal naive MAPE | ETS MAPE |
 |---|---|---|---|---|---|
 | Net sales | $20,460 | $17,384 | −15.0% | 25.4% | 21.1% |
-| Profit | $5,535 | $3,304 | −40.3% | 62.2% | 37.6% |
+| Profit | $5,535 | $3,305 | −40.3% | 62.2% | 37.6% |
 
   Profit MAPE is unstable because some months have near-zero or negative profit, so MAE is the metric to use. The selection rule is MAE on this single 6-month holdout.
 

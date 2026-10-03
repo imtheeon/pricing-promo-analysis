@@ -1,4 +1,7 @@
 """Plotly chart helpers for app.py. One accent for the key finding, greys for everything else."""
+import math
+from decimal import ROUND_HALF_UP, Decimal
+
 import pandas as pd
 import plotly.graph_objects as go
 
@@ -8,8 +11,30 @@ MODEL = {"snaive": "Seasonal naive", "ets_add_notrend": "ETS (A,N,A)"}
 SERIES = {"sales": "Net sales", "profit": "Profit"}
 
 
+def half_up(v, nd=0):
+    """Round half away from zero (3304.5 -> 3305): the one rounding rule for every displayed figure."""
+    return float(Decimal(repr(float(v))).quantize(Decimal(1).scaleb(-nd), ROUND_HALF_UP))
+
+
 def usd(v):
+    v = half_up(v)
     return f"-${-v:,.0f}" if v < 0 else f"${v:,.0f}"
+
+
+def usdk(v, nd=1):
+    """$K label as in the static PNGs: -$20K, $0, $2.5K."""
+    k = half_up(v / 1e3, nd)
+    return "$0" if k == 0 else f"{'-' if k < 0 else ''}${abs(k):,.{nd}f}".removesuffix(".0") + "K"
+
+
+def usd_ticks(lo, hi):
+    """Plotly tickvals/ticktext for a dollar axis spanning lo..hi (and 0), about 5 steps of 1/2/2.5/5 x 10^n."""
+    lo, hi = min(lo, 0), max(hi, 0)
+    span = max(hi - lo, 1)
+    step = 10 ** math.floor(math.log10(span / 5))
+    step *= next(m for m in (1, 2, 2.5, 5, 10) if span / (step * m) <= 6)
+    ticks = [i * step for i in range(math.floor(lo / step), math.ceil(hi / step) + 1)]
+    return dict(tickvals=ticks, ticktext=[usdk(t) for t in ticks])
 
 
 def finish(fig, title, x, y, h=360, **kw):
@@ -39,8 +64,8 @@ def subcat(g, title):
                                marker=dict(size=10, color=[ACC if p < 0 else GREY for p in g["profit"]]),
                                hovertemplate="%{text}<br>Discount $ %{x:$,.0f}<br>Profit %{y:$,.0f}<extra></extra>"))
     fig.add_hline(y=0, line_color=GRID)
-    fig.update_xaxes(tickprefix="$", tickformat=",.2s")
-    fig.update_yaxes(tickprefix="$", tickformat=",.2s")
+    fig.update_xaxes(**usd_ticks(g["discount_usd"].min(), g["discount_usd"].max()))
+    fig.update_yaxes(**usd_ticks(g["profit"].min(), g["profit"].max()))
     note(fig, worst["discount_usd"], worst["profit"], f"{worst['sub_category']}: {usd(worst['profit'])}", ay=40)
     return finish(fig, title, "Discount $ given away", "Profit ($)")
 
@@ -57,7 +82,7 @@ def monthly(m, title):
     for col, name, c in [("sales", "Net sales", GREY), ("discount_usd", "Discount $ given away", ACC)]:
         fig.add_scatter(x=m["order_month"], y=m[col], name=name, line=dict(color=c, width=2), mode="lines",
                         hovertemplate="%{x|%b %Y}<br>" + name + " %{y:$,.0f}<extra></extra>")
-    fig.update_yaxes(tickprefix="$", tickformat=",.2s")
+    fig.update_yaxes(**usd_ticks(0, m[["sales", "discount_usd"]].max().max()))
     return finish(fig, title, "Month", "USD per month ($)")
 
 
@@ -70,7 +95,8 @@ def backtest(b, title):
         fig.add_trace(go.Bar(x=d.model.map(MODEL), y=d.mae, text=d.mae.map(usd), textposition="outside", cliponaxis=False,
                              marker_color=[ACC if m != "snaive" else GREY for m in d.model], customdata=d[["mape_pct"]],
                              hovertemplate="%{x}<br>MAE %{y:$,.0f}<br>MAPE %{customdata[0]:.1f}%<extra></extra>"), row=1, col=i)
-    fig.update_yaxes(tickprefix="$", tickformat=",.2s", rangemode="tozero")
+        fig.update_yaxes(**usd_ticks(0, d.mae.max()), row=1, col=i)
+    fig.update_yaxes(rangemode="tozero")
     fig.update_layout(showlegend=False)
     return finish(fig, title, None, "MAE on 6 held-out months ($)")
 
@@ -83,7 +109,7 @@ def forecast(hist, f, series, title):
                     hovertemplate="%{x|%b %Y}<br>Actual %{y:$,.0f}<extra></extra>")
     fig.add_scatter(x=f.month, y=f.point, name="Forecast", mode="lines", line=dict(color=ACC, width=2.5), customdata=f[["lo95", "hi95"]],
                     hovertemplate="%{x|%b %Y}<br>Forecast %{y:$,.0f}<br>95%: %{customdata[0]:$,.0f} to %{customdata[1]:$,.0f}<extra></extra>")
-    fig.update_yaxes(tickprefix="$", tickformat=",.2s")
+    fig.update_yaxes(**usd_ticks(min(f.lo95.min(), hist[series].min()), max(f.hi95.max(), hist[series].max())))
     return finish(fig, title, "Month", f"{SERIES[series]} per month ($)")
 
 
@@ -94,3 +120,10 @@ def scenario(summ, title):
                            hovertemplate="%{x}<br>Margin %{y:.1f}%<br>Profit %{customdata[0]:$,.0f} on sales %{customdata[1]:$,.0f}<extra></extra>"))
     fig.update_yaxes(ticksuffix="%", rangemode="tozero")
     return finish(fig, title, "Scenario (Jan-Jun 2018)", "Margin (% of net sales)")
+
+
+if __name__ == "__main__":
+    assert usd(3304.5) == "$3,305" and usd(-2.5) == "-$3" and usd(3304.4) == "$3,304"
+    assert [usdk(v) for v in (-20000, 0, 2500, 2450, 120000)] == ["-$20K", "$0", "$2.5K", "$2.5K", "$120K"]
+    assert usd_ticks(-5000, 20000)["ticktext"] == ["-$5K", "$0", "$5K", "$10K", "$15K", "$20K"]
+    print("charts ok")

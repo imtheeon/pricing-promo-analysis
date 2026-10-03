@@ -70,11 +70,11 @@ with tab_p:
                     help="All lines. The Bottom line's 3.80 vs 3.82 is the matched-product test (outputs/stats_lift.csv)")
         k[1].metric("Margin, lines >20% off", f"{mg(m40):.1f}%", f"{mg(m40) - mg(m0):+.1f} pts vs {mg(m0):.1f}% at 0% off",
                     help="Unfiltered: (profit of the 21-40% and >40% bands) / (their net sales), outputs/02_by_discount_band.csv")
-        k[2].metric("Discount $ given away", f"${f['discount_usd'].sum() / 1e3:,.0f}K",
+        k[2].metric("Discount $ given away", C.usdk(f['discount_usd'].sum(), 0),
                     f"{f['discount_usd'].sum() / f['sales'].sum() * 100:.0f}% of net sales", delta_color="off",
                     help="List-price revenue minus net sales (net sales = Sales as recorded, after discount)")
         k[3].metric("Discount $ on loss-making lines", f"{loss_share:.0f}%",
-                    esc(f"profit ${f['profit'].sum() / 1e3:,.0f}K on net sales ${f['sales'].sum() / 1e6:,.2f}M"), delta_color="off")
+                    esc(f"profit {C.usdk(f['profit'].sum(), 0)} on net sales ${C.half_up(f['sales'].sum() / 1e6, 2):,.2f}M"), delta_color="off")
         st.write("")
 
         c1, c2 = st.columns(2)
@@ -113,7 +113,7 @@ with tab_p:
         colors = {"cut": C.ACC, "keep": C.BLUE, "redesign": C.GREY}
         st.dataframe(
             kc.style.map(lambda v: f"color: {colors.get(v, 'inherit')}; font-weight: bold", subset=["verdict"])
-              .format({"lines": "{:,}", "profit": "${:,.0f}", "margin_pct": "{:.1f}%", "discount_usd": "${:,.0f}",
+              .format({"lines": "{:,}", "profit": C.usd, "margin_pct": "{:.1f}%", "discount_usd": C.usd,
                        "unit_lift": "{:+.1%}", "base_lines": "{:,.0f}"}),
             hide_index=True, width="stretch")
         st.caption("Full data, ignores sidebar filters. Cut = margin <= 0; keep = profitable with unit lift above +5% vs a 0% baseline of 20+ lines; "
