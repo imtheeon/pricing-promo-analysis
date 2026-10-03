@@ -66,8 +66,10 @@ with tab_p:
         mg = lambda g: g["profit"].sum() / g["sales"].sum() * 100 if len(g) else float("nan")
         loss_share = f.loc[f["profit"] < 0, "discount_usd"].sum() / max(f["discount_usd"].sum(), 1) * 100
         k = st.columns(4)
-        k[0].metric("Units per line, discounted", f"{disc:.2f}", f"{disc - base:+.2f} vs {base:.2f} at full price", delta_color="off")
-        k[1].metric("Margin, lines >20% off", f"{mg(m40):.1f}%", f"{mg(m40) - mg(m0):+.1f} pts vs {mg(m0):.1f}% at 0% off")
+        k[0].metric("Units per line, discounted", f"{disc:.2f}", f"{disc - base:+.2f} vs {base:.2f} at full price", delta_color="off",
+                    help="All lines. The Bottom line's 3.80 vs 3.82 is the matched-product test (outputs/stats_lift.csv)")
+        k[1].metric("Margin, lines >20% off", f"{mg(m40):.1f}%", f"{mg(m40) - mg(m0):+.1f} pts vs {mg(m0):.1f}% at 0% off",
+                    help="Unfiltered: (profit of the 21-40% and >40% bands) / (their net sales), outputs/02_by_discount_band.csv")
         k[2].metric("Discount $ given away", f"${f['discount_usd'].sum() / 1e3:,.0f}K",
                     f"{f['discount_usd'].sum() / f['sales'].sum() * 100:.0f}% of net sales", delta_color="off",
                     help="List-price revenue minus net sales (net sales = Sales as recorded, after discount)")

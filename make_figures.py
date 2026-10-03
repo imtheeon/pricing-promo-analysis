@@ -12,7 +12,7 @@ plt.rcParams.update({"font.family": "sans-serif", "text.color": TXT, "axes.label
                      "axes.edgecolor": GRID, "axes.spines.top": False, "axes.spines.right": False, "axes.grid": True,
                      "grid.color": GRID, "axes.axisbelow": True, "figure.dpi": 130})
 o = lambda n: pd.read_csv(f"outputs/{n}.csv")
-usdk = lambda x, _=None: f"${x / 1e3:,.0f}K"
+usdk = lambda x, _=None: f"-${-x / 1e3:,.0f}K" if x < 0 else f"${x / 1e3:,.0f}K"
 
 
 def save(fig, name, title):

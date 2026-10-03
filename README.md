@@ -26,7 +26,7 @@ Discounts here do not sell more units. The same product sells 3.80 units per lin
 
 1. **Discounts are not linked to higher volume, so they mostly cost margin.** Units per line are flat across discount depth (3.81 at 0%, 3.74 at 1–20%, 3.78 at 21–40%, 3.90 above 40%). The cleanest test compares the same 1,440 products sold both ways: the difference is +0.01 units per line (95% CI −0.10 to +0.13; Wilcoxon p = 0.91). A regression that compares discounted and full-price lines *within the same state* also finds no volume effect at any depth (all p ≥ 0.33). It controls for sub-category and segment, with standard errors clustered by state.
 
-   ![Discounted lines sell 3.82 units vs 3.80 at full price](assets/units_by_band.png)
+   ![Discounted lines sell 3.77 units vs 3.81 at full price](assets/units_by_band.png)
 2. **Margin falls off a cliff above 20%.** Undiscounted lines earn a 29.5% margin and 1–20% lines earn 11.9%. Lines discounted 21–40% run at −15.3%, with 90% of them losing money. Lines above 40% run at −77.4%, and every one of them loses money. Holding sub-category, region and segment constant, a discounted line earns $60 less profit at 1–20% off, $207 less at 21–40% and $230 less above 40% (all p < 0.001, state-clustered). The within-state comparison gives similar or larger gaps ($82, $241 and $269). Overall, 67% of all discount dollars went to lines that lost money.
 
    ![Every discount band above 20% loses money](assets/margin_by_band.png)
