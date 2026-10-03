@@ -1,0 +1,13 @@
+series,month,model,point,lo95,hi95
+sales,2018-01-01,ets_add_notrend,46049.5,-5242.5,98412.1
+sales,2018-02-01,ets_add_notrend,27048.5,-26725.4,79904.1
+sales,2018-03-01,ets_add_notrend,64190.4,11647.4,117926.1
+sales,2018-04-01,ets_add_notrend,44832.0,-8239.4,98510.5
+sales,2018-05-01,ets_add_notrend,55313.5,1040.7,110880.2
+sales,2018-06-01,ets_add_notrend,59450.0,3698.9,116500.8
+profit,2018-01-01,ets_add_notrend,5278.4,-4967.8,15738.5
+profit,2018-02-01,ets_add_notrend,3864.3,-6897.0,14387.6
+profit,2018-03-01,ets_add_notrend,10713.5,260.3,21264.6
+profit,2018-04-01,ets_add_notrend,3495.0,-6907.9,13956.3
+profit,2018-05-01,ets_add_notrend,7521.4,-3200.6,18291.2
+profit,2018-06-01,ets_add_notrend,7190.2,-3645.0,18149.9

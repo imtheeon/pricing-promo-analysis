@@ -1,0 +1,5 @@
+series,model,n_forecasts,mae,mape_pct,smape_pct,mae_vs_snaive_pct
+sales,snaive,6,20460.0,25.4,30.1,0.0
+sales,ets_add_notrend,6,17383.9,21.1,24.3,-15.0
+profit,snaive,6,5535.2,62.2,65.9,0.0
+profit,ets_add_notrend,6,3304.5,37.6,35.9,-40.3
