@@ -1,0 +1,4 @@
+state_policy,states,lines,avg_units_per_line,avg_discount,sales,profit,margin_pct,discount_usd,share_of_discount_usd
+every line discounted,11,3879,3.76,0.336,707287.0,-98147.0,-13.9,443387.0,0.7824
+discounts some lines,17,4690,3.78,0.055,1186249.0,264223.0,22.3,123347.0,0.2176
+never discounts,21,1425,3.9,0.0,403664.0,120321.0,29.8,0.0,0.0

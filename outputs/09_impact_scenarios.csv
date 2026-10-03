@@ -1,0 +1,4 @@
+scenario,lines,low_usd_per_year,high_usd_per_year
+cap discounts above 20% at 20%,1393,33844.0,54798.0
+"drop 1-20% discounts on Storage, Supplies, Tables",460,1865.0,7908.0
+test removing other 1-20% discounts,3343,0.0,42605.0
