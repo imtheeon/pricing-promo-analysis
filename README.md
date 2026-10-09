@@ -1,5 +1,10 @@
 # Pricing & Promotion Analysis
 
+## In plain English
+- **What it does:** checks whether discounts on 9,994 retail order lines actually sold more, or just gave away profit.
+- **Biggest finding:** discounted products sold the same number of units as full-price ones (3.82 vs 3.80 per line), so most of the **$567K of discounts over four years was margin given away**. Every discount band above 20% loses money. Capping discounts at 20% would add an estimated **$34K–$55K of profit a year**, against today's $72K.
+- **Read this first:** the data is Superstore, a well-known sample retail dataset, so the dollar figures show how the method works. They are not a real company's books.
+
 **Question:** Which discounts and promotions raise revenue and profit, and which just give away margin?
 
 **Data:** 9,994 order lines (5,009 orders, 2014–2017, US) from the Kaggle [Superstore Dataset](https://www.kaggle.com/datasets/vivek468/superstore-dataset-final). Each line has its list-price discount, quantity, net sales and profit. There is no promotion calendar, so a discounted line is treated as "on promotion" and undiscounted lines are the baseline. Superstore is a widely used sample retail dataset, not one company's audited books.
